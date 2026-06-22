@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="ForgeCore.Auth/ForgeCore.Auth.csproj" />
   <Project Path="ForgeCore.Gateway/ForgeCore.Gateway.csproj" />
+  <Project Path="ForgeCore.Infrastructure/ForgeCore.Infrastructure.csproj" />
   <Project Path="ForgeCore.Players/ForgeCore.Players.csproj" />
   <Project Path="ForgeCore.Shared/ForgeCore.Shared.csproj" />
 </Solution>
