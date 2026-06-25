@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿using ForgeCore.Players.Contracts;
+using ForgeCore.Shared.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ForgeCore.Gateway.Controllers
 {
@@ -8,36 +8,46 @@ namespace ForgeCore.Gateway.Controllers
     [ApiController]
     public class PlayersController : ControllerBase
     {
-        // GET: api/<PlayersController>
+        private readonly IPlayerService _playerService;
+
+        public PlayersController(IPlayerService playerService)
+        {
+            _playerService = playerService;
+        }
+
         [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
+        public async Task<IActionResult> GetPlayers() { 
+            var players = await _playerService.GetAllAsync();
+            
+            if(players == null || players.Count == 0)
+                return NotFound();
+
+            return Ok(players);
         }
 
-        // GET api/<PlayersController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> GetPlayerById(Guid id) 
         {
-            return "value";
+            var player = await _playerService.GetByIdAsync(id);
+
+            if (player == null)
+                return NotFound();
+
+            return Ok(player);
         }
 
-        // POST api/<PlayersController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPatch("{id}/display-name")]
+        public async Task<IActionResult> UpdateDisplayName(Guid id, [FromBody] UpdateDisplayNameRequest request)
         {
-        }
-
-        // PUT api/<PlayersController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<PlayersController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            try
+            {
+                var player = await _playerService.UpdateDisplayNameAsync(id, request.NewName);
+                return Ok(player);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while updating the display name.");
+            }
         }
     }
 }

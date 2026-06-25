@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - forgecore_pgdata:/var/lib/postgresql/data
+      - forgecore_pgdata:/var/lib/postgresql
 
   redis:
     image: redis:8
