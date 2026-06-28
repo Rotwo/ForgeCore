@@ -12,9 +12,9 @@ namespace ForgeCore.Players.Application
             _playerRepository = playerRepository;
         }
 
-        public async Task<Player> CreateGuestAsync()
+        public async Task<Player> CreateGuestAsync(Guid accountId)
         {
-            var player = new Player(accountId: Guid.NewGuid(), nickname: "Guest");
+            var player = new Player(accountId: accountId, nickname: "Guest");
 
             await _playerRepository.AddAsync(player);
 
@@ -26,9 +26,19 @@ namespace ForgeCore.Players.Application
             return await _playerRepository.GetPlayersAsync();
         }
 
+        public async Task<Player?> GetByAccountIdAsync(Guid accountId)
+        {
+            return await _playerRepository.GetByAccountIdAsync(accountId);
+        }
+
         public async Task<Player?> GetByIdAsync(Guid id)
         {
             return await _playerRepository.GetByIdAsync(id);
+        }
+
+        public async Task<Player?> UpdateNicknameAsync(Guid id, string newName)
+        {
+            return await _playerRepository.UpdateNicknameAsync(id, newName);
         }
     }
 }

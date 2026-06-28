@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ForgeCore.Shared.DTOs
 {
-    public class UpdateDisplayNameRequest
+    public class UpdateNicknameRequest
     {
         public string NewName { get; set; } = string.Empty;
     }

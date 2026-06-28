@@ -7,9 +7,10 @@ namespace ForgeCore.Players.Contracts
 {
     public interface IPlayerService
     {
-        Task<Player> CreateGuestAsync();
+        Task<Player> CreateGuestAsync(Guid accountId);
         Task<Player?> GetByIdAsync(Guid id);
+        Task<Player?> GetByAccountIdAsync(Guid accountId);
         Task<List<Player>?> GetAllAsync();
-        // Task<Player?> UpdateDisplayNameAsync(Guid id, string newName);
+        Task<Player?> UpdateNicknameAsync(Guid id, string newName);
     }
 }

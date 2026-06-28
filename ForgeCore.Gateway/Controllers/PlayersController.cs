@@ -1,5 +1,6 @@
 ﻿using ForgeCore.Players.Contracts;
 using ForgeCore.Shared.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ForgeCore.Gateway.Controllers
@@ -15,38 +16,83 @@ namespace ForgeCore.Gateway.Controllers
             _playerService = playerService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetPlayers() { 
-            var players = await _playerService.GetAllAsync();
-            
-            if(players == null || players.Count == 0)
-                return NotFound();
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreateGuest([FromBody] CreateGuestRequest request)
+        {
+            if (request == null || request.AccountId == Guid.Empty)
+                return BadRequest("accountId is required");
 
-            return Ok(players);
+            try
+            {
+                var player = await _playerService.CreateGuestAsync(request.AccountId);
+                return Ok(player);
+            }
+            catch
+            {
+                return StatusCode(500, "An error occurred while creating the guest player.");
+            }
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetPlayerById(Guid id) 
+        [Authorize]
+        public async Task<IActionResult> GetById(Guid id)
         {
-            var player = await _playerService.GetByIdAsync(id);
+            if (id == Guid.Empty)
+                return BadRequest("id is required");
 
-            if (player == null)
-                return NotFound();
-
-            return Ok(player);
-        }
-
-        [HttpPatch("{id}/display-name")]
-        public async Task<IActionResult> UpdateDisplayName(Guid id, [FromBody] UpdateDisplayNameRequest request)
-        {
             try
             {
-                // var player = await _playerService.UpdateDisplayNameAsync(id, request.NewName);
-                return BadRequest();
+                var player = await _playerService.GetByIdAsync(id);
+                if (player == null)
+                    return NotFound();
+                return Ok(player);
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, "An error occurred while updating the display name.");
+                return StatusCode(500, "An error occurred while retrieving the player.");
+            }
+        }
+
+        [HttpGet("account/{accountId}")]
+        [Authorize]
+        public async Task<IActionResult> GetByAccountId(Guid accountId)
+        {
+            if (accountId == Guid.Empty)
+                return BadRequest("accountId is required");
+
+            try
+            {
+                var player = await _playerService.GetByAccountIdAsync(accountId);
+                if (player == null)
+                    return NotFound();
+                return Ok(player);
+            }
+            catch
+            {
+                return StatusCode(500, "An error occurred while retrieving the player.");
+            }
+        }
+
+        [HttpPatch("{id}/nickname")]
+        [Authorize]
+        public async Task<IActionResult> UpdateNickname(Guid id, [FromBody] UpdateNicknameRequest request)
+        {
+            if (id == Guid.Empty)
+                return BadRequest("id is required");
+            if (string.IsNullOrWhiteSpace(request.NewName) || request == null)
+                return BadRequest("newName is required");
+
+            try
+            {
+                var player = await _playerService.UpdateNicknameAsync(id, request.NewName);
+                if (player == null)
+                    return NotFound();
+                return Ok(player);
+            }
+            catch
+            {
+                return StatusCode(500, "An error occurred while updating the player's nickname.");
             }
         }
     }
