@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ForgeCore.Shared.DTOs;
 
 namespace ForgeCore.Auth.Contracts
 {
-    internal interface IAuthService
+    public interface IAuthService
     {
+        Task<AuthResultDto> LoginGuestAsync();
+        Task<AuthResultDto> RefreshAsync(string refreshToken);
+        Task LogoutAsync(Guid sessionId);
+        // Task LinkProviderAsync();
     }
 }

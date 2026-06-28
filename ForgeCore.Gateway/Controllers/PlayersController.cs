@@ -41,8 +41,8 @@ namespace ForgeCore.Gateway.Controllers
         {
             try
             {
-                var player = await _playerService.UpdateDisplayNameAsync(id, request.NewName);
-                return Ok(player);
+                // var player = await _playerService.UpdateDisplayNameAsync(id, request.NewName);
+                return BadRequest();
             }
             catch (Exception ex)
             {

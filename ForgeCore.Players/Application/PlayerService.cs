@@ -1,9 +1,5 @@
 ﻿using ForgeCore.Players.Contracts;
 using ForgeCore.Players.Domain;
-using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
 
 namespace ForgeCore.Players.Application
 {
@@ -18,14 +14,9 @@ namespace ForgeCore.Players.Application
 
         public async Task<Player> CreateGuestAsync()
         {
-            var player = new Player()
-            {
-                CreatedAt = DateTime.UtcNow,
-                DisplayName = "Guest",
-                Id = Guid.NewGuid()
-            };
+            var player = new Player(accountId: Guid.NewGuid(), nickname: "Guest");
 
-            await _playerRepository.CreateAsync(player);
+            await _playerRepository.AddAsync(player);
 
             return player;
         }
@@ -34,15 +25,10 @@ namespace ForgeCore.Players.Application
         {
             return await _playerRepository.GetPlayersAsync();
         }
-        
+
         public async Task<Player?> GetByIdAsync(Guid id)
         {
             return await _playerRepository.GetByIdAsync(id);
-        }
-
-        public async Task<Player?> UpdateDisplayNameAsync(Guid id, string newName)
-        {
-            return await _playerRepository.UpdateDisplayNameAsync(id, newName);
         }
     }
 }

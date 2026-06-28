@@ -10,6 +10,6 @@ namespace ForgeCore.Players.Contracts
         Task<Player> CreateGuestAsync();
         Task<Player?> GetByIdAsync(Guid id);
         Task<List<Player>?> GetAllAsync();
-        Task<Player?> UpdateDisplayNameAsync(Guid id, string newName);
+        // Task<Player?> UpdateDisplayNameAsync(Guid id, string newName);
     }
 }

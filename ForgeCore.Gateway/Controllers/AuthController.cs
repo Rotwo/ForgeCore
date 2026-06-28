@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿using ForgeCore.Auth.Contracts;
+using ForgeCore.Shared.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ForgeCore.Gateway.Controllers
 {
@@ -8,36 +9,51 @@ namespace ForgeCore.Gateway.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        // GET: api/<AuthController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IAuthService _authService;
+
+        public AuthController(IAuthService authService)
         {
-            return new string[] { "value1", "value2" };
+            _authService = authService;
         }
 
-        // GET api/<AuthController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [AllowAnonymous]
+        [HttpPost("guest")]
+        public async Task<IActionResult> LoginGuest()
         {
-            return "value";
+            var result = await _authService.LoginGuestAsync();
+            return Ok(result);
         }
 
-        // POST api/<AuthController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        public class RefreshRequest
         {
+            public string RefreshToken { get; set; } = string.Empty;
         }
 
-        // PUT api/<AuthController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [AllowAnonymous]
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
         {
+            if (string.IsNullOrEmpty(request?.RefreshToken))
+                return BadRequest("refreshToken is required");
+
+            var result = await _authService.RefreshAsync(request.RefreshToken);
+            return Ok(result);
         }
 
-        // DELETE api/<AuthController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        public class LogoutRequest
         {
+            public Guid SessionId { get; set; }
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] LogoutRequest request)
+        {
+            if (request == null || request.SessionId == Guid.Empty)
+                return BadRequest("sessionId is required");
+
+            await _authService.LogoutAsync(request.SessionId);
+            return NoContent();
         }
     }
 }

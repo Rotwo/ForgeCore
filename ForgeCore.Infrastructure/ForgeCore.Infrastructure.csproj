@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ForgeCore.Auth\ForgeCore.Auth.csproj" />
     <ProjectReference Include="..\ForgeCore.Players\ForgeCore.Players.csproj" />
   </ItemGroup>
 

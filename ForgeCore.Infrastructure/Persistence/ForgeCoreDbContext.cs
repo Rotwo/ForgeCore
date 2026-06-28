@@ -1,4 +1,5 @@
-﻿using ForgeCore.Players.Domain;
+﻿using ForgeCore.Auth.Domain;
+using ForgeCore.Players.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace ForgeCore.Infrastructure.Persistence
@@ -9,6 +10,9 @@ namespace ForgeCore.Infrastructure.Persistence
         {}
 
         // DbSet's for each entity in the domain model
+        public DbSet<Account> Accounts => Set<Account>();
+        public DbSet<AuthProvider> AuthProviders => Set<AuthProvider>();
+        public DbSet<Session> Sessions => Set<Session>();
         public DbSet<Player> Players => Set<Player>();
 
         // Configurations

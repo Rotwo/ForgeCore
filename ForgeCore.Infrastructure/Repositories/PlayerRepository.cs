@@ -14,30 +14,20 @@ namespace ForgeCore.Infrastructure.Repositories
             _db = db;
         }
 
-        public async Task CreateAsync(Player player)
+        public Task AddAsync(Player player)
         {
             _db.Players.Add(player);
-            await _db.SaveChangesAsync();
+            return _db.SaveChangesAsync();
         }
 
-        public async Task<Player?> GetByIdAsync(Guid id)
+        public Task<Player?> GetByIdAsync(Guid id)
         {
-            return await _db.Players.FindAsync(id);
+            return _db.Players.FindAsync(id).AsTask();
         }
 
-        public async Task<List<Player>?> GetPlayersAsync()
+        public Task<List<Player>?> GetPlayersAsync()
         {
-            return await _db.Players.ToListAsync();
-        }
-
-        public async Task<Player?> UpdateDisplayNameAsync(Guid id, string newDisplayName)
-        {
-            var player = await _db.Players.FindAsync(id);
-            if (player == null)
-                return null;
-            player.DisplayName = newDisplayName;
-            await _db.SaveChangesAsync();
-            return player;
+            return _db.Players.ToListAsync();
         }
     }
 }

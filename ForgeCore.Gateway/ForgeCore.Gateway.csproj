@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ForgeCore.Auth\ForgeCore.Auth.csproj" />
     <ProjectReference Include="..\ForgeCore.Infrastructure\ForgeCore.Infrastructure.csproj" />
     <ProjectReference Include="..\ForgeCore.Players\ForgeCore.Players.csproj" />
     <ProjectReference Include="..\ForgeCore.Shared\ForgeCore.Shared.csproj" />
