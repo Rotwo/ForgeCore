@@ -1,4 +1,29 @@
 services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: forgecore-gateway
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__ForgeCoreDb: Host=postgres;Port=5432;Database=forgecore;Username=forgecore;Password=forgecore
+      Jwt__Key: replace_this_with_a_secure_random_value_of_sufficient_length
+      Jwt__Issuer: ForgeCore
+      Jwt__Audience: ForgeCoreClient
+      Jwt__ExpiryMinutes: 60
+      Redis__ConnectionString: redis:6379
+    ports:
+      - "5065:8080"
+    volumes:
+      - forgecore_gateway_keys:/root/.aspnet/DataProtection-Keys
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   postgres:
     image: postgres:18
     container_name: forgecore-postgres
@@ -10,14 +35,29 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - forgecore_pgdata:/var/lib/postgresql
+      - forgecore_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   redis:
     image: redis:8
     container_name: forgecore-redis
     restart: always
+    command: ["redis-server", "--appendonly", "yes"]
     ports:
       - "6379:6379"
+    volumes:
+      - forgecore_redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
+  forgecore_gateway_keys:
   forgecore_pgdata:
+  forgecore_redisdata:
