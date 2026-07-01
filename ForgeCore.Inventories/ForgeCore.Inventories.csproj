@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Application\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ForgeCore.Players\ForgeCore.Players.csproj" />
     <ProjectReference Include="..\ForgeCore.Shared\ForgeCore.Shared.csproj" />
   </ItemGroup>

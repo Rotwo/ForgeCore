@@ -13,7 +13,8 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
             builder.HasKey(i => i.Id);
 
             builder.Property(i => i.Id)
-                .HasColumnName("id");
+                .HasColumnName("id")
+                .ValueGeneratedNever();
 
             builder.Property(i => i.OwnerId)
                 .HasColumnName("owner_id")

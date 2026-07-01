@@ -12,31 +12,51 @@ namespace ForgeCore.Inventories.Domain
         private readonly List<InventoryEntry> _entries = new();
         public IReadOnlyCollection<InventoryEntry> Entries => _entries;
 
-        public DateTime CreatedAt { get; private set; } = DateTime.Now;
+        public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
         private Inventory() { }
 
-        public Inventory(Guid playerId)
+        public Inventory(Guid ownerId)
         {
             Id = Guid.NewGuid();
-            OwnerId = playerId;
+            OwnerId = ownerId;
 
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTime.UtcNow;
         }
 
         public void AddEntry(InventoryEntry entry)
         {
+            var existing = _entries.FirstOrDefault(e =>
+                e.ItemKey == entry.ItemKey &&
+                e.IsStackable);
+
+            if (existing is not null)
+            {
+                existing.Increase(entry.Quantity);
+                return;
+            }
+
             _entries.Add(entry);
         }
 
-        public void RemoveEntry(InventoryEntry entry)
+        public void RemoveEntry(Guid entryId)
         {
+            var entry = _entries.FirstOrDefault(e => e.Id == entryId);
+
+            if (entry is null)
+                throw new InvalidOperationException($"Entry {entryId} not found.");
+
             _entries.Remove(entry);
         }
 
         public void ModifyEntry(InventoryEntry newEntry)
         {
-            _entries.Find(e => e.Id == newEntry.Id)?.Update(newEntry);
+            var entry = _entries.FirstOrDefault(e => e.Id == newEntry.Id);
+
+            if (entry is null)
+                throw new InvalidOperationException($"Entry {newEntry.Id} not found.");
+
+            entry.Update(newEntry);
         }
 
         public void ClearEntries()

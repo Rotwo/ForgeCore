@@ -25,4 +25,8 @@
     <ProjectReference Include="..\ForgeCore.Players\ForgeCore.Players.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

@@ -35,7 +35,7 @@ namespace ForgeCore.Infrastructure.Migrations
                     quantity = table.Column<int>(type: "integer", nullable: false),
                     slot_index = table.Column<int>(type: "integer", nullable: true),
                     is_stackable = table.Column<bool>(type: "boolean", nullable: false),
-                    metadata = table.Column<InventoryEntryMetadata>(type: "jsonb", nullable: false)
+                    metadata = table.Column<string>(type: "jsonb", nullable: false)
                 },
                 constraints: table =>
                 {
