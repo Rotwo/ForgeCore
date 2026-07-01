@@ -1,8 +1,11 @@
 using ForgeCore.Inventories.Contracts;
 using ForgeCore.Inventories.Domain;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using SystemTextJsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace ForgeCore.Gateway.Controllers
 {
@@ -22,6 +25,14 @@ namespace ForgeCore.Gateway.Controllers
             public Guid OwnerId { get; set; }
         }
 
+        public class InventoryResponse
+        {
+            public Guid Id { get; set; }
+            public Guid OwnerId { get; set; }
+            public DateTime CreatedAt { get; set; }
+            public List<InventoryEntryResponse> Entries { get; set; } = new();
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Create([FromBody] CreateInventoryRequest request)
@@ -32,7 +43,7 @@ namespace ForgeCore.Gateway.Controllers
             try
             {
                 var inventory = await _inventoryService.CreateInventoryAsync(request.OwnerId);
-                return Ok(inventory);
+                return Ok(ToResponse(inventory));
             }
             catch (InvalidOperationException ex)
             {
@@ -56,7 +67,7 @@ namespace ForgeCore.Gateway.Controllers
                 var inventory = await _inventoryService.GetInventoryAsync(ownerId);
                 if (inventory == null)
                     return NotFound();
-                return Ok(inventory);
+                return Ok(ToResponse(inventory));
             }
             catch (Exception ex)
             {
@@ -81,6 +92,18 @@ namespace ForgeCore.Gateway.Controllers
             public int Quantity { get; set; }
             public int? SlotIndex { get; set; }
             public bool IsStackable { get; set; }
+            public JObject? Metadata { get; set; }
+        }
+
+        public class InventoryEntryResponse
+        {
+            public Guid Id { get; set; }
+            public Guid InventoryId { get; set; }
+            public string ItemKey { get; set; } = string.Empty;
+            public int Quantity { get; set; }
+            public int? SlotIndex { get; set; }
+            public bool IsStackable { get; set; }
+            public Dictionary<string, object?> Metadata { get; set; } = new();
         }
 
         [HttpPost("{inventoryId}/entries")]
@@ -95,9 +118,10 @@ namespace ForgeCore.Gateway.Controllers
             try
             {
                 var entry = new InventoryEntry(request.ItemKey, request.Quantity, request.SlotIndex, request.IsStackable);
+                ApplyMetadata(entry, request.Metadata);
 
                 await _inventoryService.AddEntryAsync(inventoryId, entry);
-                return Ok(entry);
+                return Ok(ToResponse(entry));
             }
             catch (InvalidOperationException ex)
             {
@@ -139,6 +163,7 @@ namespace ForgeCore.Gateway.Controllers
             public int Quantity { get; set; }
             public int? SlotIndex { get; set; }
             public bool IsStackable { get; set; }
+            public JObject? Metadata { get; set; }
         }
 
         [HttpPut("{inventoryId}/entries/{entryId}")]
@@ -153,9 +178,10 @@ namespace ForgeCore.Gateway.Controllers
             try
             {
                 var entry = new InventoryEntry(entryId, request.ItemKey, request.Quantity, request.SlotIndex, request.IsStackable);
+                ApplyMetadata(entry, request.Metadata);
 
                 await _inventoryService.UpdateEntryAsync(inventoryId, entry);
-                return Ok(entry);
+                return Ok(ToResponse(entry));
             }
             catch (InvalidOperationException ex)
             {
@@ -165,6 +191,61 @@ namespace ForgeCore.Gateway.Controllers
             {
                 return StatusCode(500, ex.ToString());
             }
+        }
+
+        private static void ApplyMetadata(InventoryEntry entry, JObject? metadata)
+        {
+            if (metadata is null)
+                return;
+
+            foreach (var property in metadata.Properties())
+            {
+                var json = property.Value.ToString(Formatting.None);
+                var value = SystemTextJsonSerializer.Deserialize<JsonElement>(json);
+
+                entry.SetMetadata(property.Name, value);
+            }
+        }
+
+        private static InventoryEntryResponse ToResponse(InventoryEntry entry)
+        {
+            return new InventoryEntryResponse
+            {
+                Id = entry.Id,
+                InventoryId = entry.InventoryId,
+                ItemKey = entry.ItemKey,
+                Quantity = entry.Quantity,
+                SlotIndex = entry.SlotIndex,
+                IsStackable = entry.IsStackable,
+                Metadata = entry.Metadata.Values.ToDictionary(
+                    pair => pair.Key,
+                    pair => ToNewtonsoftValue(pair.Value))
+            };
+        }
+
+        private static InventoryResponse ToResponse(Inventory inventory)
+        {
+            return new InventoryResponse
+            {
+                Id = inventory.Id,
+                OwnerId = inventory.OwnerId,
+                CreatedAt = inventory.CreatedAt,
+                Entries = inventory.Entries.Select(ToResponse).ToList()
+            };
+        }
+
+        private static object? ToNewtonsoftValue(JsonElement value)
+        {
+            return value.ValueKind switch
+            {
+                JsonValueKind.Undefined or JsonValueKind.Null => null,
+                JsonValueKind.True => true,
+                JsonValueKind.False => false,
+                JsonValueKind.Number when value.TryGetInt64(out var longValue) => longValue,
+                JsonValueKind.Number when value.TryGetDouble(out var doubleValue) => doubleValue,
+                JsonValueKind.String => value.GetString(),
+                _ => JsonConvert.DeserializeObject<object?>(value.GetRawText())
+            };
         }
     }
 }
