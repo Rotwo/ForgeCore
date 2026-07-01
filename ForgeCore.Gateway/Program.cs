@@ -2,6 +2,8 @@ using ForgeCore.Auth.Application;
 using ForgeCore.Auth.Contracts;
 using ForgeCore.Infrastructure.Persistence;
 using ForgeCore.Infrastructure.Repositories;
+using ForgeCore.Inventories.Application;
+using ForgeCore.Inventories.Contracts;
 using ForgeCore.Players.Application;
 using ForgeCore.Players.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,11 +13,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services
+    .AddControllers()
+    .AddNewtonsoftJson();
 
 builder.Services.AddDbContext<ForgeCoreDbContext>(options =>
     options.UseNpgsql(
@@ -49,6 +49,12 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAuthProviderRepository, AuthProviderRepository>();
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
+
+// Register Swagger services
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -78,7 +84,8 @@ await using (var scope = app.Services.CreateAsyncScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
