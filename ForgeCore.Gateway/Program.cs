@@ -1,5 +1,7 @@
 using ForgeCore.Auth.Application;
 using ForgeCore.Auth.Contracts;
+using ForgeCore.Economy.Application;
+using ForgeCore.Economy.Contracts;
 using ForgeCore.Infrastructure.Persistence;
 using ForgeCore.Infrastructure.Repositories;
 using ForgeCore.Inventories.Application;
@@ -51,6 +53,8 @@ builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IWalletRepository, WalletRepository>();
+builder.Services.AddScoped<IWalletService, WalletService>();
 
 // Register Swagger services
 builder.Services.AddEndpointsApiExplorer();
