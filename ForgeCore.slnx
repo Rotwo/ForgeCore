@@ -5,4 +5,5 @@
   <Project Path="ForgeCore.Inventories/ForgeCore.Inventories.csproj" />
   <Project Path="ForgeCore.Players/ForgeCore.Players.csproj" />
   <Project Path="ForgeCore.Shared/ForgeCore.Shared.csproj" />
+  <Project Path="ForgeCore.Economy/ForgeCore.Economy.csproj" />
 </Solution>
