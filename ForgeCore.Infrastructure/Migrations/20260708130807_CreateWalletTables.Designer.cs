@@ -3,6 +3,7 @@ using System;
 using ForgeCore.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ForgeCore.Infrastructure.Migrations
 {
     [DbContext(typeof(ForgeCoreDbContext))]
-    partial class ForgeCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260708130807_CreateWalletTables")]
+    partial class CreateWalletTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,6 +112,7 @@ namespace ForgeCore.Infrastructure.Migrations
             modelBuilder.Entity("ForgeCore.Economy.Domain.CurrencyBalance", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("Balance")
@@ -239,13 +243,11 @@ namespace ForgeCore.Infrastructure.Migrations
 
             modelBuilder.Entity("ForgeCore.Economy.Domain.CurrencyBalance", b =>
                 {
-                    b.HasOne("ForgeCore.Economy.Domain.Wallet", "Wallet")
+                    b.HasOne("ForgeCore.Economy.Domain.Wallet", null)
                         .WithMany("Balances")
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Wallet");
                 });
 
             modelBuilder.Entity("ForgeCore.Inventories.Domain.InventoryEntry", b =>

@@ -23,6 +23,7 @@
     <ProjectReference Include="..\ForgeCore.Auth\ForgeCore.Auth.csproj" />
     <ProjectReference Include="..\ForgeCore.Inventories\ForgeCore.Inventories.csproj" />
     <ProjectReference Include="..\ForgeCore.Players\ForgeCore.Players.csproj" />
+    <ProjectReference Include="..\ForgeCore.Economy\ForgeCore.Economy.csproj" />
   </ItemGroup>
 
   <ItemGroup>
