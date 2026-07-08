@@ -12,7 +12,7 @@
 
 A high-performance, self-hosted gaming backend framework built with **ASP.NET Core 10** and **C#**. Designed for game studios and indie developers who want full control over their game server infrastructure.
 
-![Hero](https://i.imgur.com/BOqP83c.jpeg)
+![Hero](https://raw.githubusercontent.com/Rotwo/ForgeCore/refs/heads/master/.github/assets/hero.jpg)
 
 [Features](#features) • [Quick Start](#quick-start) • [Documentation](#documentation) • [Contributing](#contributing)
 
@@ -187,6 +187,9 @@ ForgeCore/
 ├── docker-compose.yml           # Multi-container orchestration
 └── Dockerfile                   # Container image
 ```
+
+## Showcase
+[Test on Unity 6.4 using Experimental SDK](https://raw.githubusercontent.com/Rotwo/ForgeCore/refs/heads/master/.github/assets/unity_example.mp4)
 
 ## Contributing
 
