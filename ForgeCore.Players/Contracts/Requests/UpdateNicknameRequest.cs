@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ForgeCore.Shared.DTOs
+﻿namespace ForgeCore.Players.Contracts.Requests
 {
     public class UpdateNicknameRequest
     {
