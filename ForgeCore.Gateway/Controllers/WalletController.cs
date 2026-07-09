@@ -1,14 +1,14 @@
 using ForgeCore.Economy.Contracts;
-using ForgeCore.Economy.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ForgeCore.Economy.Contracts.Requests;
 
 namespace ForgeCore.Gateway.Controllers
 {
     [Route("api/econommy/wallet")]
     [ApiController]
     [Authorize]
-    public class WalletController : ControllerBase
+    public partial class WalletController : ControllerBase
     {
         private readonly IWalletService _walletService;
 
@@ -130,17 +130,6 @@ namespace ForgeCore.Gateway.Controllers
             {
                 return StatusCode(500, ex.Message);
             }
-        }
-
-        public class CreateWalletRequest
-        {
-            public Guid OwnerId { get; set; }
-        }
-
-        public class WalletMovementRequest
-        {
-            public decimal Amount { get; set; }
-            public Guid CurrencyId { get; set; }
         }
     }
 }

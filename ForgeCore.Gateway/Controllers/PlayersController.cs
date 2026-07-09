@@ -1,4 +1,5 @@
 ﻿using ForgeCore.Players.Contracts;
+using ForgeCore.Players.Contracts.Requests;
 using ForgeCore.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

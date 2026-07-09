@@ -5,32 +5,20 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text.Json;
-using SystemTextJsonSerializer = System.Text.Json.JsonSerializer;
+using ForgeCore.Inventories.Contracts.Requests;
+using ForgeCore.Inventories.Contracts.Responses;
 
 namespace ForgeCore.Gateway.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InventoriesController : ControllerBase
+    public partial class InventoriesController : ControllerBase
     {
         private readonly IInventoryService _inventoryService;
 
         public InventoriesController(IInventoryService inventoryService)
         {
             _inventoryService = inventoryService;
-        }
-
-        public class CreateInventoryRequest
-        {
-            public Guid OwnerId { get; set; }
-        }
-
-        public class InventoryResponse
-        {
-            public Guid Id { get; set; }
-            public Guid OwnerId { get; set; }
-            public DateTime CreatedAt { get; set; }
-            public List<InventoryEntryResponse> Entries { get; set; } = new();
         }
 
         [HttpPost]
@@ -86,26 +74,6 @@ namespace ForgeCore.Gateway.Controllers
             return NoContent();
         }
 
-        public class AddEntryRequest
-        {
-            public string ItemKey { get; set; } = string.Empty;
-            public int Quantity { get; set; }
-            public int? SlotIndex { get; set; }
-            public bool IsStackable { get; set; }
-            public JObject? Metadata { get; set; }
-        }
-
-        public class InventoryEntryResponse
-        {
-            public Guid Id { get; set; }
-            public Guid InventoryId { get; set; }
-            public string ItemKey { get; set; } = string.Empty;
-            public int Quantity { get; set; }
-            public int? SlotIndex { get; set; }
-            public bool IsStackable { get; set; }
-            public Dictionary<string, object?> Metadata { get; set; } = new();
-        }
-
         [HttpPost("{inventoryId}/entries")]
         [Authorize]
         public async Task<IActionResult> AddEntry(Guid inventoryId, [FromBody] AddEntryRequest request)
@@ -156,16 +124,6 @@ namespace ForgeCore.Gateway.Controllers
             }
         }
 
-        public class UpdateEntryRequest
-        {
-            public Guid Id { get; set; }
-            public string ItemKey { get; set; } = string.Empty;
-            public int Quantity { get; set; }
-            public int? SlotIndex { get; set; }
-            public bool IsStackable { get; set; }
-            public JObject? Metadata { get; set; }
-        }
-
         [HttpPut("{inventoryId}/entries/{entryId}")]
         [Authorize]
         public async Task<IActionResult> UpdateEntry(Guid inventoryId, Guid entryId, [FromBody] UpdateEntryRequest request)
@@ -201,7 +159,7 @@ namespace ForgeCore.Gateway.Controllers
             foreach (var property in metadata.Properties())
             {
                 var json = property.Value.ToString(Formatting.None);
-                var value = SystemTextJsonSerializer.Deserialize<JsonElement>(json);
+                var value = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(json);
 
                 entry.SetMetadata(property.Name, value);
             }

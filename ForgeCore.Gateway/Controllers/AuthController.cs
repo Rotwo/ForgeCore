@@ -1,13 +1,13 @@
 ﻿using ForgeCore.Auth.Contracts;
-using ForgeCore.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ForgeCore.Auth.Contracts.Requests;
 
 namespace ForgeCore.Gateway.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public partial class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
 
@@ -24,11 +24,6 @@ namespace ForgeCore.Gateway.Controllers
             return Ok(result);
         }
 
-        public class RefreshRequest
-        {
-            public string RefreshToken { get; set; } = string.Empty;
-        }
-
         [AllowAnonymous]
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh([FromBody] RefreshRequest request)
@@ -38,11 +33,6 @@ namespace ForgeCore.Gateway.Controllers
 
             var result = await _authService.RefreshAsync(request.RefreshToken);
             return Ok(result);
-        }
-
-        public class LogoutRequest
-        {
-            public Guid SessionId { get; set; }
         }
 
         [Authorize]
