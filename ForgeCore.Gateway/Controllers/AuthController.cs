@@ -7,7 +7,7 @@ namespace ForgeCore.Gateway.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public partial class AuthController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
 

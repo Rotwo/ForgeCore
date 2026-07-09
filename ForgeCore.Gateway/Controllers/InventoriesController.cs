@@ -12,7 +12,7 @@ namespace ForgeCore.Gateway.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public partial class InventoriesController : ControllerBase
+    public class InventoriesController : ControllerBase
     {
         private readonly IInventoryService _inventoryService;
 

@@ -8,7 +8,7 @@ namespace ForgeCore.Gateway.Controllers
     [Route("api/econommy/wallet")]
     [ApiController]
     [Authorize]
-    public partial class WalletController : ControllerBase
+    public class WalletController : ControllerBase
     {
         private readonly IWalletService _walletService;
 
