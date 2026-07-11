@@ -55,6 +55,7 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 builder.Services.AddScoped<IWalletService, WalletService>();
+builder.Services.AddScoped<ForgeCore.Shared.Contracts.IUnitOfWork, ForgeCore.Infrastructure.UnitOfWork>();
 
 // Register Swagger services
 builder.Services.AddEndpointsApiExplorer();
