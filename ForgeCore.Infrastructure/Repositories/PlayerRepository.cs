@@ -14,10 +14,9 @@ namespace ForgeCore.Infrastructure.Repositories
             _db = db;
         }
 
-        public Task AddAsync(Player player)
+        public void Add(Player player)
         {
             _db.Players.Add(player);
-            return _db.SaveChangesAsync();
         }
 
         public Task<Player?> GetByAccountIdAsync(Guid accountId)
@@ -35,18 +34,18 @@ namespace ForgeCore.Infrastructure.Repositories
             return _db.Players.ToListAsync();
         }
 
-        public async Task<Player?> UpdateNicknameAsync(Guid id, string newName)
+        public async void UpdateNickname(Guid id, string newName)
         {
             var player = await _db.Players.FirstOrDefaultAsync(p => p.Id == id);
 
             if (player is null)
-                return null;
+                throw new InvalidOperationException($"Player with id {id} not found.");
 
             player.Rename(newName);
-
-            await _db.SaveChangesAsync();
-
-            return player;
         }
+
+        // Persistence is handled by UnitOfWork
+
+
     }
 }

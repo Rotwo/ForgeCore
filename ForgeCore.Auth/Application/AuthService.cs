@@ -3,6 +3,7 @@ using ForgeCore.Auth.Domain;
 using ForgeCore.Players.Contracts;
 using ForgeCore.Players.Domain;
 using ForgeCore.Shared.DTOs;
+using ForgeCore.Shared.Contracts;
 
 namespace ForgeCore.Auth.Application
 {
@@ -12,13 +13,15 @@ namespace ForgeCore.Auth.Application
         private readonly IPlayerRepository _playerRepository;
         private readonly ISessionRepository _sessionRepository;
         private readonly ITokenService _tokenService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AuthService(IAccountRepository accountRepository, IPlayerRepository playerRepository, ISessionRepository sessionRepository, ITokenService tokenService)
+        public AuthService(IAccountRepository accountRepository, IPlayerRepository playerRepository, ISessionRepository sessionRepository, ITokenService tokenService, IUnitOfWork unitOfWork)
         {
             _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
             _playerRepository = playerRepository ?? throw new ArgumentNullException(nameof(playerRepository));
             _sessionRepository = sessionRepository ?? throw new ArgumentNullException(nameof(sessionRepository));
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
         public async Task<AuthResultDto> LoginGuestAsync()
@@ -29,7 +32,7 @@ namespace ForgeCore.Auth.Application
                 displayName: "Guest"
             );
 
-            await _accountRepository.AddAsync(account);
+            _accountRepository.Add(account);
 
             // 2. Create Player
             var player = new Player(
@@ -37,7 +40,7 @@ namespace ForgeCore.Auth.Application
                 nickname: account.DisplayName
             );
 
-            await _playerRepository.AddAsync(player);
+            _playerRepository.Add(player);
 
             // 3. Create Session
             var refreshToken = _tokenService.GenerateRefreshToken();
@@ -48,13 +51,15 @@ namespace ForgeCore.Auth.Application
                 duration: TimeSpan.FromDays(7)
             );
 
-            await _sessionRepository.AddAsync(session);
+            _sessionRepository.Add(session);
 
             // 4. Access token
             var accessToken = _tokenService.GenerateAccessToken(
                 account.Id,
                 session.Id
             );
+
+            await _unitOfWork.SaveChangesAsync();
 
             return new AuthResultDto
             {

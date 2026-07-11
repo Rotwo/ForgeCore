@@ -14,10 +14,9 @@ namespace ForgeCore.Infrastructure.Repositories
             _db = db;
         }
 
-        public Task AddAsync(Session session)
+        public void Add(Session session)
         {
             _db.Sessions.Add(session);
-            return _db.SaveChangesAsync();
         }
 
         public Task<Session?> GetByIdAsync(Guid id)

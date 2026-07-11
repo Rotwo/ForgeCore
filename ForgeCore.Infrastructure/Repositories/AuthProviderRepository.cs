@@ -14,10 +14,9 @@ namespace ForgeCore.Infrastructure.Repositories
             _db = db;
         }
 
-        public Task AddAsync(AuthProvider provider)
+        public void Add(AuthProvider provider)
         {
             _db.AuthProviders.Add(provider);
-            return _db.SaveChangesAsync();
         }
 
         public Task<bool> ExistsAsync(AuthProviderType type, string providerUserId)

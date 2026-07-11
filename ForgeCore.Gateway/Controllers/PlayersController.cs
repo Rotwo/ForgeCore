@@ -86,10 +86,8 @@ namespace ForgeCore.Gateway.Controllers
 
             try
             {
-                var player = await _playerService.UpdateNicknameAsync(id, request.NewName);
-                if (player == null)
-                    return NotFound();
-                return Ok(player);
+                await _playerService.UpdateNicknameAsync(id, request.NewName);
+                return Ok();
             }
             catch
             {

@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ForgeCore.Shared\ForgeCore.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

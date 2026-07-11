@@ -11,6 +11,6 @@ namespace ForgeCore.Players.Contracts
         Task<Player?> GetByIdAsync(Guid id);
         Task<Player?> GetByAccountIdAsync(Guid accountId);
         Task<List<Player>?> GetAllAsync();
-        Task<Player?> UpdateNicknameAsync(Guid id, string newName);
+        Task UpdateNicknameAsync(Guid id, string newName);
     }
 }

@@ -14,10 +14,9 @@ namespace ForgeCore.Infrastructure.Repositories
             _db = db;
         }
 
-        public Task AddAsync(Account account)
+        public void Add(Account account)
         {
             _db.Accounts.Add(account);
-            return _db.SaveChangesAsync();
         }
 
         public Task<bool> ExistsAsync(Guid id)
@@ -31,5 +30,7 @@ namespace ForgeCore.Infrastructure.Repositories
                 .Include(a => a.AuthProviders)
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
+
+        // Persistence is handled by UnitOfWork
     }
 }

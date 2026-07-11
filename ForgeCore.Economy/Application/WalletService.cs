@@ -1,38 +1,42 @@
 using ForgeCore.Economy.Contracts;
 using ForgeCore.Economy.Domain;
+using ForgeCore.Shared.Contracts;
 
 namespace ForgeCore.Economy.Application
 {
     public class WalletService : IWalletService
     {
         private readonly IWalletRepository _walletRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public WalletService(IWalletRepository walletRepository)
+        public WalletService(IWalletRepository walletRepository, IUnitOfWork unitOfWork)
         {
             _walletRepository = walletRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Wallet> CreateWalletAsync(Guid ownerId)
         {
             var newWallet = new Wallet(ownerId: ownerId);
-            await _walletRepository.CreateWalletAsync(newWallet);
+            _walletRepository.Add(newWallet);
+            await _unitOfWork.SaveChangesAsync();
             return newWallet;
         }
 
         public async Task DepositAsync(Guid walletId, decimal amount, Guid currencyId)
         {
-            var wallet = await _walletRepository.GetWalletAsync(walletId);
+            var wallet = await _walletRepository.GetAsync(walletId);
 
             if (wallet is null)
                 throw new InvalidOperationException($"Wallet with ID {walletId} not found.");
 
             wallet.Deposit(amount, currencyId);
-            await _walletRepository.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task<decimal> GetBalanceAmountAsync(Guid walletId, Guid currencyId)
         {
-            var wallet = await _walletRepository.GetWalletAsync(walletId);
+            var wallet = await _walletRepository.GetAsync(walletId);
             if (wallet is null)
                 throw new InvalidOperationException($"Wallet with ID {walletId} not found.");
 
@@ -41,7 +45,7 @@ namespace ForgeCore.Economy.Application
 
         public async Task<IEnumerable<CurrencyBalance>> GetBalancesAsync(Guid walletId)
         {
-            var wallet = await _walletRepository.GetWalletAsync(walletId);
+            var wallet = await _walletRepository.GetAsync(walletId);
             if (wallet is null)
                 throw new InvalidOperationException($"Wallet with ID {walletId} not found.");
 
@@ -65,13 +69,13 @@ namespace ForgeCore.Economy.Application
 
         public async Task WithdrawAsync(Guid walletId, decimal amount, Guid currencyId)
         {
-            var wallet = await _walletRepository.GetWalletAsync(walletId);
+            var wallet = await _walletRepository.GetAsync(walletId);
 
             if (wallet is null)
                 throw new InvalidOperationException($"Wallet with ID {walletId} not found.");
 
             wallet.Withdraw(amount, currencyId);
-            await _walletRepository.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

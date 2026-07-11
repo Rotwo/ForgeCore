@@ -7,10 +7,10 @@ namespace ForgeCore.Inventories.Contracts
 {
     public interface IInventoryRepository
     {
-        Task AddAsync(Inventory inventory);
-        Task DeleteAsync(Guid inventoryId);
+        void Add(Inventory inventory);
+        void RemoveById(Guid inventoryId);
         Task<Inventory?> GetByIdAsync(Guid inventoryId);
         Task<Inventory?> GetByOwnerIdAsync(Guid ownerId);
-        Task SaveChangesAsync();
+        // Persist changes is handled by IUnitOfWork
     }
 }

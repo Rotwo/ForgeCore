@@ -4,10 +4,10 @@ namespace ForgeCore.Economy.Contracts
 {
     public interface IWalletRepository
     {
-        Task<Wallet?> GetWalletAsync(Guid walletId);
-        Task CreateWalletAsync(Wallet wallet);
-        Task UpdateWalletAsync(Wallet wallet);
+        void Add(Wallet wallet);
+        void Update(Wallet wallet);
+        Task<Wallet?> GetAsync(Guid walletId);
         Task<IEnumerable<Wallet>> GetByOwnerIdAsync(Guid ownerId);
-        Task SaveChangesAsync();
+        // Persist changes is handled by IUnitOfWork
     }
 }

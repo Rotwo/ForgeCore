@@ -14,29 +14,24 @@ namespace ForgeCore.Infrastructure.Repositories
             _db = db;
         }
 
-        public Task CreateWalletAsync(Wallet wallet)
+        public void Add(Wallet wallet)
         {
             _db.Wallets.Add(wallet);
-            return _db.SaveChangesAsync();
         }
 
-        public Task<Wallet?> GetWalletAsync(Guid walletId)
+        public Task<Wallet?> GetAsync(Guid walletId)
         {
             return _db.Wallets
                 .Include(w => w.Balances)
                 .FirstOrDefaultAsync(w => w.Id == walletId);
         }
 
-        public Task UpdateWalletAsync(Wallet wallet)
+        public void Update(Wallet wallet)
         {
             _db.Wallets.Update(wallet);
-            return _db.SaveChangesAsync();
         }
 
-        public Task SaveChangesAsync()
-        {
-            return _db.SaveChangesAsync();
-        }
+        // Persistence is handled by UnitOfWork
 
         public Task<IEnumerable<Wallet>> GetByOwnerIdAsync(Guid ownerId)
         {

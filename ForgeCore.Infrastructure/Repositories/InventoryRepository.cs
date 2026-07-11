@@ -14,10 +14,9 @@ namespace ForgeCore.Infrastructure.Repositories
             _db = db;
         }
 
-        public async Task AddAsync(Inventory inventory)
+        public void Add(Inventory inventory)
         {
-            await _db.Inventories.AddAsync(inventory);
-            await _db.SaveChangesAsync();
+            _db.Inventories.Add(inventory);
         }
 
         public Task<Inventory?> GetByIdAsync(Guid inventoryId)
@@ -34,7 +33,7 @@ namespace ForgeCore.Infrastructure.Repositories
                 .FirstOrDefaultAsync(i => i.OwnerId == ownerId);
         }
 
-        public async Task DeleteAsync(Guid inventoryId)
+        public async void RemoveById(Guid inventoryId)
         {
             var inventory = await _db.Inventories
                 .FirstOrDefaultAsync(i => i.Id == inventoryId);
@@ -43,12 +42,9 @@ namespace ForgeCore.Infrastructure.Repositories
                 return;
 
             _db.Inventories.Remove(inventory);
-            await _db.SaveChangesAsync();
         }
 
-        public Task SaveChangesAsync()
-        {
-            return _db.SaveChangesAsync();
-        }
+        // Persistence is handled by UnitOfWork
+
     }
 }
