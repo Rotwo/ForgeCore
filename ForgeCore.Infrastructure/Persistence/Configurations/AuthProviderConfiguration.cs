@@ -36,6 +36,10 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
                 .HasColumnName("email")
                 .IsRequired(false);
 
+            builder.Property(x => x.CredentialsHash)
+                .HasColumnName("credentials_hash")
+                .IsRequired(false);
+
             builder.Property(x => x.LinkedAt)
                 .HasColumnName("linked_at")
                 .IsRequired();

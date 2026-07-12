@@ -1,4 +1,5 @@
 using ForgeCore.Auth.Application;
+using ForgeCore.Auth.Application.Handlers;
 using ForgeCore.Auth.Contracts;
 using ForgeCore.Economy.Application;
 using ForgeCore.Economy.Contracts;
@@ -51,6 +52,7 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAuthProviderRepository, AuthProviderRepository>();
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthProviderHandler, EmailPasswordHandler>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IWalletRepository, WalletRepository>();

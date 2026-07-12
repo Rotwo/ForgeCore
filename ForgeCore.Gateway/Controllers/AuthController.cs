@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ForgeCore.Auth.Contracts.Requests;
+using System.Text.Json;
 
 namespace ForgeCore.Gateway.Controllers
 {
@@ -44,6 +45,42 @@ namespace ForgeCore.Gateway.Controllers
 
             await _authService.LogoutAsync(request.SessionId);
             return NoContent();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("email")]
+        public async Task<IActionResult> LoginEmail([FromBody] EmailPasswordRequest request)
+        {
+            try
+            {
+                var result = await _authService.RegisterEmailAsync(request.Email, request.Password, request.DisplayName);
+                return Ok(result);
+            }
+            catch(InvalidOperationException ex)
+            {
+                return Conflict(new { error = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("email/login")]
+        public async Task<IActionResult> LoginWithEmail([FromBody] EmailPasswordRequest request)
+        {
+            try
+            {
+                var credentials = JsonSerializer.Serialize(new
+                    {
+                        Email = request.Email,
+                        Password = request.Password
+                    });
+
+                var result = await _authService.LoginAsync(Auth.Domain.AuthProviderType.EmailPassword, credentials);
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { error = ex.Message });
+            }
         }
     }
 }

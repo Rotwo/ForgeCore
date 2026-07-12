@@ -1,9 +1,9 @@
-﻿using ForgeCore.Auth.Contracts;
+﻿using ForgeCore.Auth.Application.Handlers;
+using ForgeCore.Auth.Contracts;
 using ForgeCore.Auth.Domain;
 using ForgeCore.Players.Contracts;
-using ForgeCore.Players.Domain;
-using ForgeCore.Shared.DTOs;
 using ForgeCore.Shared.Contracts;
+using ForgeCore.Shared.DTOs;
 
 namespace ForgeCore.Auth.Application
 {
@@ -12,15 +12,19 @@ namespace ForgeCore.Auth.Application
         private readonly IAccountRepository _accountRepository;
         private readonly IPlayerRepository _playerRepository;
         private readonly ISessionRepository _sessionRepository;
+        private readonly IAuthProviderRepository _authProviderRepository;
         private readonly ITokenService _tokenService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEnumerable<IAuthProviderHandler> _handlers;
 
-        public AuthService(IAccountRepository accountRepository, IPlayerRepository playerRepository, ISessionRepository sessionRepository, ITokenService tokenService, IUnitOfWork unitOfWork)
+        public AuthService(IAccountRepository accountRepository, IPlayerRepository playerRepository, ISessionRepository sessionRepository, ITokenService tokenService, IAuthProviderRepository authProviderRepository, IEnumerable<IAuthProviderHandler> handlers, IUnitOfWork unitOfWork)
         {
             _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
             _playerRepository = playerRepository ?? throw new ArgumentNullException(nameof(playerRepository));
             _sessionRepository = sessionRepository ?? throw new ArgumentNullException(nameof(sessionRepository));
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
+            _authProviderRepository = authProviderRepository ?? throw new ArgumentNullException(nameof(authProviderRepository));
+            _handlers = handlers ?? throw new ArgumentNullException(nameof(handlers));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
@@ -90,6 +94,102 @@ namespace ForgeCore.Auth.Application
                 AccountId = account.Id,
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
+            };
+        }
+
+        public async Task<AuthResultDto> RegisterEmailAsync(string email, string password, string displayName)
+        {
+            var normalizedEmail = email.Trim().ToLowerInvariant();
+
+            if (await _authProviderRepository.ExistsAsync(AuthProviderType.EmailPassword, normalizedEmail))
+                throw new InvalidOperationException("An account with this email already exists");
+
+            var passwordHash = EmailPasswordHandler.HashPassword(password);
+
+            var account = new Account(normalizedEmail, displayName);
+            _accountRepository.Add(account);
+
+            var provider = new AuthProvider(
+                type: AuthProviderType.EmailPassword,
+                providerUserId: normalizedEmail,
+                email: normalizedEmail,
+                credentialsHash: passwordHash);
+
+            account.LinkProvider(provider);
+            _authProviderRepository.Add(provider);
+
+            var refreshToken = _tokenService.GenerateRefreshToken();
+            var session = new Session(account.Id, refreshToken, TimeSpan.FromDays(7));
+            _sessionRepository.Add(session);
+
+            var accessToken = _tokenService.GenerateAccessToken(account.Id, session.Id);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return new AuthResultDto
+            {
+                AccountId = account.Id,
+                SessionId = session.Id,
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                ExpiresAt = DateTime.UtcNow.AddDays(7)
+            };
+        }
+
+        public Task LinkProviderAsync(Guid accountId, AuthProviderType providerType, string credentials)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<AuthResultDto> LoginAsync(AuthProviderType providerType, string credentials)
+        {
+            var handler = _handlers.FirstOrDefault(h => h.ProviderType == providerType)
+                ?? throw new ArgumentException($"Unsupported provider type: {providerType}");
+
+            var result = await handler.ValidateAsync(credentials);
+
+            var existingProvider = await _authProviderRepository.GetByProviderAsync(
+                providerType,
+                result.ProviderUserId
+            );
+
+            Account account;
+
+            if (existingProvider != null)
+            {
+                account = await _accountRepository.GetByIdAsync(existingProvider.AccountId)
+                    ?? throw new Exception("Account not found for linked provider");
+            }
+            else
+            {
+                account = new Account(result.Email, result.DisplayName ?? "Player");
+                _accountRepository.Add(account);
+
+                var provider = new AuthProvider(
+                    type: providerType,
+                    providerUserId: result.ProviderUserId,
+                    email: result.Email
+                );
+
+                account.LinkProvider(provider);
+                _authProviderRepository.Add(provider);
+            }
+
+            var refreshToken = _tokenService.GenerateRefreshToken();
+            var session = new Session(account.Id, refreshToken, TimeSpan.FromDays(7));
+            _sessionRepository.Add(session);
+
+            var accessToken = _tokenService.GenerateAccessToken(account.Id, session.Id);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return new AuthResultDto
+            {
+                AccountId = account.Id,
+                SessionId = session.Id,
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                ExpiresAt = DateTime.UtcNow.AddDays(7)
             };
         }
     }
