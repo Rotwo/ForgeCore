@@ -5,6 +5,8 @@ namespace ForgeCore.Economy.Domain
         public Guid Id { get; set; }
         public Guid OwnerId { get; set; }
 
+        public DateTime CreatedAt { get; set; }
+
         public ICollection<CurrencyBalance> Balances { get; private set; } = new List<CurrencyBalance>();
 
         public void Deposit(decimal amount, Guid currencyId)
@@ -34,6 +36,7 @@ namespace ForgeCore.Economy.Domain
         {
             OwnerId = ownerId;
             Id = Guid.NewGuid();
+            CreatedAt = DateTime.UtcNow;
         }
 
         private Wallet() { }

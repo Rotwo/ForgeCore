@@ -13,12 +13,11 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
             builder.HasIndex(p => p.Id)
                 .IsUnique();
 
-            builder.Property(x => x.CreatedAt)
-                .IsRequired();
-
             builder.Property(x => x.Id).HasColumnName("id");
-            builder.Property(x => x.CreatedAt).HasColumnName("created_at");
-            builder.Property(x => x.AccountId).HasColumnName("account_id");
+            builder.Property(x => x.CreatedAt).HasColumnName("created_at").IsRequired();
+            builder.Property(x => x.AccountId).HasColumnName("account_id").IsRequired();
+            builder.Property(x => x.Nickname).HasColumnName("nickname").IsRequired();
+            builder.Property(x => x.LastActiveAt).HasColumnName("last_active_at").IsRequired();
         }
     }
 }

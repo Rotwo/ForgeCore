@@ -17,9 +17,11 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
                 .HasColumnName("id");
 
             builder.Property(x => x.Balance)
+                .HasColumnName("balance")
                 .HasPrecision(18, 2);
 
             builder.Property(x => x.CurrencyId)
+                .HasColumnName("currency_id")
                 .IsRequired();
         }
     }

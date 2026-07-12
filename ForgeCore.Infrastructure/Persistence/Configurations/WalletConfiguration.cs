@@ -13,7 +13,15 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
             builder.HasIndex(x => x.Id)
                 .IsUnique();
 
+            builder.Property(x => x.Id)
+                .HasColumnName("id");
+
             builder.Property(x => x.OwnerId)
+                .HasColumnName("owner_id")
+                .IsRequired();
+
+            builder.Property(x => x.CreatedAt)
+                .HasColumnName("created_at")
                 .IsRequired();
 
             builder.HasMany(x => x.Balances)

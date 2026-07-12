@@ -3,6 +3,7 @@ using System;
 using ForgeCore.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ForgeCore.Infrastructure.Migrations
 {
     [DbContext(typeof(ForgeCoreDbContext))]
-    partial class ForgeCoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260712192948_AddWalletMissingFieldAndFixNamingConventions")]
+    partial class AddWalletMissingFieldAndFixNamingConventions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
