@@ -10,7 +10,8 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
         {
             builder.ToTable("players");
 
-            builder.HasKey(p => p.Id);
+            builder.HasIndex(p => p.Id)
+                .IsUnique();
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired();

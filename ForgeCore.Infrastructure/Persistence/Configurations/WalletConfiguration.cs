@@ -10,7 +10,8 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
         {
             builder.ToTable("wallets");
 
-            builder.HasKey(x => x.Id);
+            builder.HasIndex(x => x.Id)
+                .IsUnique();
 
             builder.Property(x => x.OwnerId)
                 .IsRequired();

@@ -18,7 +18,8 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
         {
             builder.ToTable("inventory_entries");
 
-            builder.HasKey(e => e.Id);
+            builder.HasIndex(e => e.Id)
+                .IsUnique();
 
             builder.Property(e => e.Id)
                 .HasColumnName("id")

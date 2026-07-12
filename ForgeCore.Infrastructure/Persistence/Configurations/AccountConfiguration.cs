@@ -10,7 +10,8 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
         {
             builder.ToTable("accounts");
 
-            builder.HasKey(a => a.Id);
+            builder.HasIndex(x => x.Id)
+                .IsUnique();
 
             builder.Property(x => x.Id)
                 .HasColumnName("id");
@@ -19,9 +20,15 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
                 .HasColumnName("display_name")
                 .IsRequired();
 
+            builder.HasIndex(x => x.DisplayName)
+                .IsUnique();
+
             builder.Property(x => x.Email)
                 .HasColumnName("email")
                 .IsRequired(false);  // Email nullable (guest accounts)
+
+            builder.HasIndex(x => x.Email)
+                .IsUnique();
 
             builder.Property(x => x.CreatedAt)
                 .HasColumnName("created_at")
