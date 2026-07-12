@@ -34,15 +34,7 @@ namespace ForgeCore.Auth.Application
 
             _accountRepository.Add(account);
 
-            // 2. Create Player
-            var player = new Player(
-                accountId: account.Id,
-                nickname: account.DisplayName
-            );
-
-            _playerRepository.Add(player);
-
-            // 3. Create Session
+            // 2. Create Session
             var refreshToken = _tokenService.GenerateRefreshToken();
 
             var session = new Session(
@@ -53,7 +45,7 @@ namespace ForgeCore.Auth.Application
 
             _sessionRepository.Add(session);
 
-            // 4. Access token
+            // 3. Access token
             var accessToken = _tokenService.GenerateAccessToken(
                 account.Id,
                 session.Id
@@ -64,7 +56,6 @@ namespace ForgeCore.Auth.Application
             return new AuthResultDto
             {
                 AccountId = account.Id,
-                PlayerId = player.Id,
                 SessionId = session.Id,
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
@@ -97,7 +88,6 @@ namespace ForgeCore.Auth.Application
             return new AuthResultDto
             {
                 AccountId = account.Id,
-                PlayerId = Guid.Empty, // not needed right now, but can be fetched if needed
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
             };
