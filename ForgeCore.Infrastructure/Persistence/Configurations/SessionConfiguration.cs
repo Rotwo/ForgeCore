@@ -20,6 +20,10 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
             builder.Property(x => x.ExpiresAt).HasColumnName("expires_at").IsRequired();
             builder.Property(x => x.DeviceInfo).HasColumnName("device_info");
             builder.Property(x => x.IpAddress).HasColumnName("ip_address");
+
+            builder.HasIndex(s => s.RefreshToken)
+                .IsUnique()
+                .HasDatabaseName("IX_Session_RefreshToken_Unique");
         }
     }
 }
