@@ -39,6 +39,10 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
                 .WithOne()
                 .HasForeignKey("AccountId")
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Property(x => x.RowVersion)
+                .IsRowVersion()
+                .HasColumnName("row_version");
         }
     }
 }

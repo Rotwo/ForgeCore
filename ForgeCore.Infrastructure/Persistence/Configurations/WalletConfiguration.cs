@@ -28,6 +28,10 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
                 .WithOne(x => x.Wallet)
                 .HasForeignKey(x => x.WalletId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Property(x => x.RowVersion)
+                .IsRowVersion()
+                .HasColumnName("row_version");
         }
     }
 }

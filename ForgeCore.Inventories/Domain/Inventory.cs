@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace ForgeCore.Inventories.Domain
@@ -13,6 +14,8 @@ namespace ForgeCore.Inventories.Domain
         public IReadOnlyCollection<InventoryEntry> Entries => _entries;
 
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
+        
+        public byte[] RowVersion { get; set; }
 
         private Inventory() { }
 

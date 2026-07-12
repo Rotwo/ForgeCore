@@ -6,6 +6,7 @@ namespace ForgeCore.Economy.Domain
         public Guid OwnerId { get; set; }
 
         public DateTime CreatedAt { get; set; }
+        public byte[] RowVersion { get; set; }
 
         public ICollection<CurrencyBalance> Balances { get; private set; } = new List<CurrencyBalance>();
 

@@ -10,6 +10,8 @@ namespace ForgeCore.Inventories.Domain
         public bool IsStackable { get; private set; }
         public InventoryEntryMetadata Metadata { get; private set; } = new();
 
+        public byte[] RowVersion { get; set; }
+
         private InventoryEntry() { }
 
         public InventoryEntry(string itemKey, int quantity, int? slotIndex, bool isStackable)

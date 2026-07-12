@@ -32,6 +32,10 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
 
             builder.Navigation(i => i.Entries)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            builder.Property(i => i.RowVersion)
+                .IsRowVersion()
+                .HasColumnName("row_version");
         }
     }
 }

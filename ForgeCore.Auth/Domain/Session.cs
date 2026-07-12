@@ -14,6 +14,8 @@
         public string? DeviceInfo { get; private set; }
         public string? IpAddress { get; private set; }
 
+        public byte[] RowVersion { get; set; }
+
         private Session() { }
 
         public Session(Guid accountId, string refreshToken, TimeSpan duration)

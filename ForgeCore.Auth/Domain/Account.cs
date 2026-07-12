@@ -12,6 +12,8 @@
         private readonly List<AuthProvider> _authProviders = new();
         public IReadOnlyCollection<AuthProvider> AuthProviders => _authProviders;
 
+        public byte[] RowVersion { get; set; }
+
         private Account() { }
 
         public Account(string email, string displayName)

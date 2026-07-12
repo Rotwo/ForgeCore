@@ -11,6 +11,8 @@
         public DateTime CreatedAt { get; private set; }
         public DateTime LastActiveAt { get; private set; }
 
+        public byte[] RowVersion { get; set; }
+
         public Player(Guid accountId, string nickname)
         {
             Id = Guid.NewGuid();

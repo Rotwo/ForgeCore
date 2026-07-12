@@ -23,6 +23,10 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
             builder.Property(x => x.CurrencyId)
                 .HasColumnName("currency_id")
                 .IsRequired();
+
+            builder.Property(x => x.RowVersion)
+                .IsRowVersion()
+                .HasColumnName("row_version");
         }
     }
 }

@@ -53,6 +53,10 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
                     value => SerializeMetadata(value),
                     value => DeserializeMetadata(value))
                 .Metadata.SetValueComparer(MetadataComparer);
+
+            builder.Property(x => x.RowVersion)
+                .IsRowVersion()
+                .HasColumnName("row_version");
         }
 
         private static string SerializeMetadata(InventoryEntryMetadata? metadata)

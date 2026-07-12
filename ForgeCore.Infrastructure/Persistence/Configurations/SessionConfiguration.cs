@@ -24,6 +24,10 @@ namespace ForgeCore.Infrastructure.Persistence.Configurations
             builder.HasIndex(s => s.RefreshToken)
                 .IsUnique()
                 .HasDatabaseName("IX_Session_RefreshToken_Unique");
+
+            builder.Property(x => x.RowVersion)
+                .IsRowVersion()
+                .HasColumnName("row_version");
         }
     }
 }

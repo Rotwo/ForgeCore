@@ -10,6 +10,8 @@ namespace ForgeCore.Economy.Domain
 
         public decimal Balance { get; private set; }
 
+        public byte[] RowVersion { get; set; }
+
         private CurrencyBalance() { }
 
         public CurrencyBalance(Guid currencyId, Guid walletId)
