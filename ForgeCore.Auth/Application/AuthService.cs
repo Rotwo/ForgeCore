@@ -10,7 +10,6 @@ namespace ForgeCore.Auth.Application
     public class AuthService : IAuthService
     {
         private readonly IAccountRepository _accountRepository;
-        private readonly IPlayerRepository _playerRepository;
         private readonly ISessionRepository _sessionRepository;
         private readonly IAuthProviderRepository _authProviderRepository;
         private readonly ITokenService _tokenService;
@@ -20,7 +19,6 @@ namespace ForgeCore.Auth.Application
         public AuthService(IAccountRepository accountRepository, IPlayerRepository playerRepository, ISessionRepository sessionRepository, ITokenService tokenService, IAuthProviderRepository authProviderRepository, IEnumerable<IAuthProviderHandler> handlers, IUnitOfWork unitOfWork)
         {
             _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
-            _playerRepository = playerRepository ?? throw new ArgumentNullException(nameof(playerRepository));
             _sessionRepository = sessionRepository ?? throw new ArgumentNullException(nameof(sessionRepository));
             _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
             _authProviderRepository = authProviderRepository ?? throw new ArgumentNullException(nameof(authProviderRepository));
