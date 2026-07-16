@@ -33,7 +33,7 @@ namespace ForgeCore.Auth.Application
             // 1. Create Account (anonymous)
             var account = new Account(
                 email: null,
-                displayName: "Guest"
+                displayName: $"Guest_{Guid.NewGuid():N}"[..14]
             );
 
             _accountRepository.Add(account);
