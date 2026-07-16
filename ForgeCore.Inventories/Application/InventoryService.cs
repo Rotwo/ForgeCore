@@ -44,7 +44,7 @@ namespace ForgeCore.Inventories.Application
 
         public async Task DeleteInventoryAsync(Guid inventoryId)
         {
-            _inventoryRepository.RemoveById(inventoryId);
+            await _inventoryRepository.RemoveById(inventoryId);
             await _unitOfWork.SaveChangesAsync();
         }
 

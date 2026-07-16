@@ -33,7 +33,7 @@ namespace ForgeCore.Infrastructure.Repositories
                 .FirstOrDefaultAsync(i => i.OwnerId == ownerId);
         }
 
-        public async void RemoveById(Guid inventoryId)
+        public async Task RemoveById(Guid inventoryId)
         {
             var inventory = await _db.Inventories
                 .FirstOrDefaultAsync(i => i.Id == inventoryId);
@@ -43,8 +43,5 @@ namespace ForgeCore.Infrastructure.Repositories
 
             _db.Inventories.Remove(inventory);
         }
-
-        // Persistence is handled by UnitOfWork
-
     }
 }
