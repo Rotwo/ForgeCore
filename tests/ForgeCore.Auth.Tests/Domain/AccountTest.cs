@@ -30,7 +30,7 @@ public class AccountTest
     {
         // Arrange
         var account = AccountFactory.Create();
-        var provider = new AuthProvider(type: AuthProviderType.EmailPassword, providerUserId: "example@test.com", email: "password123_");
+        var provider = AuthProviderFactory.Create();
 
         // Act
         account.LinkProvider(provider);
@@ -44,7 +44,7 @@ public class AccountTest
     {
         // Arrange
         var account = AccountFactory.Create();
-        var provider = new AuthProvider(type: AuthProviderType.EmailPassword, providerUserId: "example@test.com", email: "password123_");
+        var provider = AuthProviderFactory.Create();
 
         // Act
         account.LinkProvider(provider);
