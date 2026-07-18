@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using System.Text.Json;
 using ForgeCore.Inventories.Contracts.Requests;
 using ForgeCore.Inventories.Contracts.Responses;
+using System.Diagnostics;
 
 namespace ForgeCore.Gateway.Controllers
 {
@@ -140,6 +141,28 @@ namespace ForgeCore.Gateway.Controllers
 
                 await _inventoryService.UpdateEntryAsync(inventoryId, entry);
                 return Ok(ToResponse(entry));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.ToString());
+            }
+        }
+
+        [HttpDelete("{inventoryId}/entries")]
+        [Authorize]
+        public async Task<IActionResult> ClearEntries(Guid inventoryId)
+        {
+            if (inventoryId == Guid.Empty)
+                return BadRequest("inventoryId is required");
+
+            try
+            {
+                await _inventoryService.ClearEntriesAsync(inventoryId);
+                return Ok();
             }
             catch (InvalidOperationException ex)
             {

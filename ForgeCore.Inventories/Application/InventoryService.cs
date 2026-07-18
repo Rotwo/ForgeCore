@@ -27,6 +27,17 @@ namespace ForgeCore.Inventories.Application
             await _unitOfWork.SaveChangesAsync();
         }
 
+        public async Task ClearEntriesAsync(Guid inventoryId)
+        {
+            var inventory = await _inventoryRepository.GetByIdAsync(inventoryId);
+
+            if (inventory is null)
+                throw new InvalidOperationException($"Inventory {inventoryId} not found.");
+
+            inventory.ClearEntries();
+            await _unitOfWork.SaveChangesAsync();
+        }
+
         public async Task<Inventory> CreateInventoryAsync(Guid ownerId)
         {
             var existing = await _inventoryRepository.GetByOwnerIdAsync(ownerId);

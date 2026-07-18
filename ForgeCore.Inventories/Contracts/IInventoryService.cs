@@ -10,5 +10,6 @@ namespace ForgeCore.Inventories.Contracts
         Task AddEntryAsync(Guid inventoryId, InventoryEntry entry);
         Task RemoveEntryAsync(Guid inventoryId, Guid entryId);
         Task UpdateEntryAsync(Guid inventoryId, InventoryEntry newEntry);
+        Task ClearEntriesAsync(Guid inventoryId);
     }
 }
