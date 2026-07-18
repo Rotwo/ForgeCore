@@ -28,5 +28,9 @@
         {
             _authProviders.Add(provider);
         }
+
+        public void UpdateDisplayName(string newDisplayName) { 
+            DisplayName = newDisplayName;
+        }
     }
 }
