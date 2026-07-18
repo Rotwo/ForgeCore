@@ -12,6 +12,7 @@ using ForgeCore.Players.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -58,6 +59,11 @@ builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 builder.Services.AddScoped<IWalletService, WalletService>();
 builder.Services.AddScoped<ForgeCore.Shared.Contracts.IUnitOfWork, ForgeCore.Infrastructure.UnitOfWork>();
+
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+});
 
 // Register Swagger services
 builder.Services.AddEndpointsApiExplorer();
