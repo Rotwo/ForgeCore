@@ -136,11 +136,11 @@ namespace ForgeCore.Gateway.Controllers
 
             try
             {
-                var entry = new InventoryEntry(entryId, request.ItemKey, request.Quantity, request.SlotIndex, request.IsStackable);
-                ApplyMetadata(entry, request.Metadata);
+                var newEntry = new InventoryEntry(entryId, request.ItemKey, request.Quantity, request.SlotIndex, request.IsStackable);
+                ApplyMetadata(newEntry, request.Metadata);
 
-                await _inventoryService.UpdateEntryAsync(inventoryId, entry);
-                return Ok(ToResponse(entry));
+                await _inventoryService.UpdateEntryAsync(inventoryId, entryId, newEntry);
+                return Ok(ToResponse(newEntry));
             }
             catch (InvalidOperationException ex)
             {

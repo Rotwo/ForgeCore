@@ -76,14 +76,14 @@ namespace ForgeCore.Inventories.Application
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task UpdateEntryAsync(Guid inventoryId, InventoryEntry newEntry)
+        public async Task UpdateEntryAsync(Guid inventoryId, Guid oldEntryId, InventoryEntry newEntry)
         {
             var inventory = await _inventoryRepository.GetByIdAsync(inventoryId);
 
             if (inventory == null)
                 throw new InvalidOperationException($"Inventory {inventoryId} not found.");
 
-            inventory.ModifyEntry(newEntry);
+            inventory.ModifyEntry(oldEntryId, newEntry);
 
             await _unitOfWork.SaveChangesAsync();
         }

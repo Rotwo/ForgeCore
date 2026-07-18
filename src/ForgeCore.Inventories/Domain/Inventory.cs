@@ -14,7 +14,7 @@ namespace ForgeCore.Inventories.Domain
         public IReadOnlyCollection<InventoryEntry> Entries => _entries;
 
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
-        
+
         public byte[] RowVersion { get; set; }
 
         private Inventory() { }
@@ -52,12 +52,12 @@ namespace ForgeCore.Inventories.Domain
             _entries.Remove(entry);
         }
 
-        public void ModifyEntry(InventoryEntry newEntry)
+        public void ModifyEntry(Guid oldEntryId, InventoryEntry newEntry)
         {
-            var entry = _entries.FirstOrDefault(e => e.Id == newEntry.Id);
+            var entry = _entries.FirstOrDefault(e => e.Id == oldEntryId);
 
             if (entry is null)
-                throw new InvalidOperationException($"Entry {newEntry.Id} not found.");
+                throw new InvalidOperationException($"Entry {oldEntryId} not found.");
 
             entry.Update(newEntry);
         }
