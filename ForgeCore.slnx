@@ -11,6 +11,7 @@
   <Folder Name="/Tests/">
     <Project Path="tests/ForgeCore.Auth.Tests/ForgeCore.Auth.Tests.csproj" />
     <Project Path="tests/ForgeCore.Economy.Tests/ForgeCore.Economy.Tests.csproj" />
+    <Project Path="tests/ForgeCore.Players.Tests/ForgeCore.Players.Tests.csproj" />
   </Folder>
   
 </Solution>
