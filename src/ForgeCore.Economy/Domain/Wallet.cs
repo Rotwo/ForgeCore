@@ -8,7 +8,16 @@ namespace ForgeCore.Economy.Domain
         public DateTime CreatedAt { get; set; }
         public byte[] RowVersion { get; set; }
 
-        public ICollection<CurrencyBalance> Balances { get; private set; } = new List<CurrencyBalance>();
+        private readonly List<CurrencyBalance> _balances = new();
+        public IReadOnlyCollection<CurrencyBalance> Balances => _balances;
+
+        public void AddCurrencyBalance(CurrencyBalance balance)
+        {
+            if (_balances.Any(b => b.CurrencyId == balance.CurrencyId))
+                throw new InvalidOperationException("Currency already exists.");
+
+            _balances.Add(balance);
+        }
 
         public void Deposit(decimal amount, Guid currencyId)
         {
@@ -17,7 +26,7 @@ namespace ForgeCore.Economy.Domain
             if (balance is null)
             {
                 balance = new CurrencyBalance(currencyId, Id);
-                Balances.Add(balance);
+                _balances.Add(balance);
             }
 
             balance.AddBalance(amount);
