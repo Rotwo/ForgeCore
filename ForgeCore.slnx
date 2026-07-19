@@ -12,6 +12,7 @@
     <Project Path="tests/ForgeCore.Auth.Tests/ForgeCore.Auth.Tests.csproj" />
     <Project Path="tests/ForgeCore.Economy.Tests/ForgeCore.Economy.Tests.csproj" />
     <Project Path="tests/ForgeCore.Players.Tests/ForgeCore.Players.Tests.csproj" />
+    <Project Path="tests/ForgeCore.Inventories.Tests/ForgeCore.Inventories.Tests.csproj" />
   </Folder>
   
 </Solution>
