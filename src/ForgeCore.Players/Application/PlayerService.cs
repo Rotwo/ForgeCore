@@ -45,5 +45,11 @@ namespace ForgeCore.Players.Application
             await _playerRepository.UpdateNickname(id, newName);
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task<bool> IsOwnedByAccountAsync(Guid playerId, Guid accountId)
+        {
+            var player = await _playerRepository.GetByIdAsync(playerId);
+            return player is not null && player.AccountId == accountId;
+        }
     }
 }

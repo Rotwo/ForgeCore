@@ -12,5 +12,6 @@ namespace ForgeCore.Players.Contracts
         Task<Player?> GetByAccountIdAsync(Guid accountId);
         Task<List<Player>?> GetAllAsync();
         Task UpdateNicknameAsync(Guid id, string newName);
+        Task<bool> IsOwnedByAccountAsync(Guid playerId, Guid accountId);
     }
 }
