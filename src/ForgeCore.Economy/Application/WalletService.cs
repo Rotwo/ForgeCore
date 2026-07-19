@@ -55,7 +55,7 @@ namespace ForgeCore.Economy.Application
         public async Task<IEnumerable<CurrencyBalance>> GetBalancesByOwnerIdAsync(Guid ownerId)
         {
             var wallet = await _walletRepository.GetByOwnerIdAsync(ownerId);
-            if (wallet is null)
+            if (!wallet.Any())
                 throw new InvalidOperationException($"Wallet with ID {ownerId} not found.");
 
             return wallet.SelectMany(w => w.Balances);
