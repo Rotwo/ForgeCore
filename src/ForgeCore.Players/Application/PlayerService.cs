@@ -42,7 +42,7 @@ namespace ForgeCore.Players.Application
 
         public async Task UpdateNicknameAsync(Guid id, string newName)
         {
-            _playerRepository.UpdateNickname(id, newName);
+            await _playerRepository.UpdateNickname(id, newName);
             await _unitOfWork.SaveChangesAsync();
         }
     }

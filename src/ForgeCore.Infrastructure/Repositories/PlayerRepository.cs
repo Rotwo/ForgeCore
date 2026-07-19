@@ -34,7 +34,7 @@ namespace ForgeCore.Infrastructure.Repositories
             return _db.Players.ToListAsync();
         }
 
-        public async void UpdateNickname(Guid id, string newName)
+        public async Task UpdateNickname(Guid id, string newName)
         {
             var player = await _db.Players.FirstOrDefaultAsync(p => p.Id == id);
 
@@ -43,9 +43,5 @@ namespace ForgeCore.Infrastructure.Repositories
 
             player.Rename(newName);
         }
-
-        // Persistence is handled by UnitOfWork
-
-
     }
 }
