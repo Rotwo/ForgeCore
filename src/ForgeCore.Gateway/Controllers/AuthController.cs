@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ForgeCore.Auth.Contracts.Requests;
 using System.Text.Json;
+using ForgeCore.Shared.Contracts;
 
 namespace ForgeCore.Gateway.Controllers
 {
@@ -11,10 +12,12 @@ namespace ForgeCore.Gateway.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly ICurrentUserService _currentUser;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, ICurrentUserService currentUser)
         {
             _authService = authService;
+            _currentUser = currentUser;
         }
 
         [AllowAnonymous]
@@ -43,6 +46,10 @@ namespace ForgeCore.Gateway.Controllers
             if (request == null || request.SessionId == Guid.Empty)
                 return BadRequest("sessionId is required");
 
+            if (request.SessionId != _currentUser.SessionId)
+                return Forbid();
+
+
             await _authService.LogoutAsync(request.SessionId);
             return NoContent();
         }
@@ -56,7 +63,7 @@ namespace ForgeCore.Gateway.Controllers
                 var result = await _authService.RegisterEmailAsync(request.Email, request.Password, request.DisplayName);
                 return Ok(result);
             }
-            catch(InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
                 return Conflict(new { error = ex.Message });
             }
@@ -69,10 +76,10 @@ namespace ForgeCore.Gateway.Controllers
             try
             {
                 var credentials = JsonSerializer.Serialize(new
-                    {
-                        Email = request.Email,
-                        Password = request.Password
-                    });
+                {
+                    Email = request.Email,
+                    Password = request.Password
+                });
 
                 var result = await _authService.LoginAsync(Auth.Domain.AuthProviderType.EmailPassword, credentials);
                 return Ok(result);

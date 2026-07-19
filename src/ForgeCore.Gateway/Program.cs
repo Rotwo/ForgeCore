@@ -3,12 +3,14 @@ using ForgeCore.Auth.Application.Handlers;
 using ForgeCore.Auth.Contracts;
 using ForgeCore.Economy.Application;
 using ForgeCore.Economy.Contracts;
+using ForgeCore.Gateway.Services;
 using ForgeCore.Infrastructure.Persistence;
 using ForgeCore.Infrastructure.Repositories;
 using ForgeCore.Inventories.Application;
 using ForgeCore.Inventories.Contracts;
 using ForgeCore.Players.Application;
 using ForgeCore.Players.Contracts;
+using ForgeCore.Shared.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -45,6 +47,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 Encoding.UTF8.GetBytes(jwtKey))
         };
     });
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
