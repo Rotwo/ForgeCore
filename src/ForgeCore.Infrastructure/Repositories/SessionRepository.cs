@@ -35,5 +35,17 @@ namespace ForgeCore.Infrastructure.Repositories
             if (session is null) return;
             session.Revoke();
         }
+
+        public async Task RevokeAllForAccountAsync(Guid accountId)
+        {
+            var sessions = await _db.Sessions
+                .Where(s => s.AccountId == accountId && !s.IsRevoked)
+                .ToListAsync();
+
+            foreach (var session in sessions)
+            {
+                session.Revoke();
+            }
+        }
     }
 }

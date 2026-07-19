@@ -8,5 +8,6 @@ namespace ForgeCore.Auth.Contracts
         Task<Session?> GetByRefreshTokenAsync(string refreshToken);
         Task<Session?> GetByIdAsync(Guid id);
         Task RevokeAsync(Guid sessionId);
+        Task RevokeAllForAccountAsync(Guid accountId);
     }
 }

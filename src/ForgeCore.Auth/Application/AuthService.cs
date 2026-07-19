@@ -75,18 +75,37 @@ namespace ForgeCore.Auth.Application
         {
             var session = await _sessionRepository.GetByRefreshTokenAsync(refreshToken);
 
-            if (session == null || session.IsExpired())
+            if (session is null)
                 throw new UnauthorizedAccessException("Invalid session");
 
-            var account = await _accountRepository.GetByIdAsync(session.AccountId);
+            if (!session.IsValid())
+            {
+                // Kill all sessions to avoid session steal
+                if (session.IsRevoked)
+                {
+                    await _sessionRepository.RevokeAllForAccountAsync(session.AccountId);
+                    await _unitOfWork.SaveChangesAsync();
+                }
 
-            if (account == null)
-                throw new Exception("Account not found");
+                throw new UnauthorizedAccessException("Invalid session");
+            }
+
+            var account = await _accountRepository.GetByIdAsync(session.AccountId)
+                ?? throw new Exception("Account not found");
+
+            // Rotate current session
+            session.Revoke();
+
+            var newRefreshToken = _tokenService.GenerateRefreshToken();
+            var newSession = new Session(account.Id, newRefreshToken, TimeSpan.FromDays(7));
+            _sessionRepository.Add(newSession);
 
             var accessToken = _tokenService.GenerateAccessToken(
                 account.Id,
-                session.Id
+                newSession.Id
             );
+
+            await _unitOfWork.SaveChangesAsync();
 
             return new AuthResultDto
             {
