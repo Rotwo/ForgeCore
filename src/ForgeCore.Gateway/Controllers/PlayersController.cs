@@ -1,5 +1,6 @@
 ﻿using ForgeCore.Players.Contracts;
 using ForgeCore.Players.Contracts.Requests;
+using ForgeCore.Shared.Contracts;
 using ForgeCore.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,22 +12,21 @@ namespace ForgeCore.Gateway.Controllers
     public class PlayersController : ControllerBase
     {
         private readonly IPlayerService _playerService;
+        private readonly ICurrentUserService _currentUser;
 
-        public PlayersController(IPlayerService playerService)
+        public PlayersController(IPlayerService playerService, ICurrentUserService currentUser)
         {
             _playerService = playerService;
+            _currentUser = currentUser;
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreateGuest([FromBody] CreateGuestRequest request)
+        public async Task<IActionResult> CreateGuest()
         {
-            if (request == null || request.AccountId == Guid.Empty)
-                return BadRequest("accountId is required");
-
             try
             {
-                var player = await _playerService.CreateGuestAsync(request.AccountId);
+                var player = await _playerService.CreateGuestAsync(_currentUser.AccountId);
                 return Ok(player);
             }
             catch
