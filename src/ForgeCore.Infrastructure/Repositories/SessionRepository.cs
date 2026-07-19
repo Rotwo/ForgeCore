@@ -29,9 +29,11 @@ namespace ForgeCore.Infrastructure.Repositories
             return _db.Sessions.FirstOrDefaultAsync(s => s.RefreshToken == refreshToken);
         }
 
-        public Task RevokeAsync(Guid sessionId)
+        public async Task RevokeAsync(Guid sessionId)
         {
-            return _db.Sessions.Where(s => s.Id == sessionId).ExecuteDeleteAsync();
+            var session = await _db.Sessions.FirstOrDefaultAsync(s => s.Id == sessionId);
+            if (session is null) return;
+            session.Revoke();
         }
     }
 }

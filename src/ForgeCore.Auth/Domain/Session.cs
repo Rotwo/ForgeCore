@@ -11,6 +11,9 @@
         public DateTime CreatedAt { get; private set; }
         public DateTime ExpiresAt { get; private set; }
 
+        public bool IsRevoked { get; private set; }
+        public DateTime? RevokedAt { get; private set; }
+
         public string? DeviceInfo { get; private set; }
         public string? IpAddress { get; private set; }
 
@@ -27,7 +30,16 @@
             ExpiresAt = CreatedAt.Add(duration);
         }
 
+        public void Revoke()
+        {
+            IsRevoked = true;
+            RevokedAt = DateTime.UtcNow;
+        }
+
         public bool IsExpired()
             => DateTime.UtcNow > ExpiresAt;
+
+        public bool IsValid()
+            => !IsRevoked && !IsExpired();
     }
 }

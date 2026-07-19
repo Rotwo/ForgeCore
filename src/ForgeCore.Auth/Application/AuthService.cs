@@ -68,6 +68,7 @@ namespace ForgeCore.Auth.Application
         public async Task LogoutAsync(Guid sessionId)
         {
             await _sessionRepository.RevokeAsync(sessionId);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task<AuthResultDto> RefreshAsync(string refreshToken)
