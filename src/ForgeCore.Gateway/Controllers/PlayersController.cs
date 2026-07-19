@@ -45,8 +45,11 @@ namespace ForgeCore.Gateway.Controllers
             try
             {
                 var player = await _playerService.GetByIdAsync(id);
-                if (player == null)
-                    return NotFound();
+                if (player == null) return NotFound();
+
+                if (player.AccountId != _currentUser.AccountId)
+                    return Forbid();
+
                 return Ok(player);
             }
             catch
@@ -65,8 +68,11 @@ namespace ForgeCore.Gateway.Controllers
             try
             {
                 var player = await _playerService.GetByAccountIdAsync(accountId);
-                if (player == null)
-                    return NotFound();
+                if (player == null) return NotFound();
+
+                if (accountId != _currentUser.AccountId)
+                    return Forbid();
+
                 return Ok(player);
             }
             catch
@@ -83,6 +89,8 @@ namespace ForgeCore.Gateway.Controllers
                 return BadRequest("id is required");
             if (string.IsNullOrWhiteSpace(request.NewName) || request == null)
                 return BadRequest("newName is required");
+            if (!await _playerService.IsOwnedByAccountAsync(id, _currentUser.AccountId))
+                return Forbid();
 
             try
             {
