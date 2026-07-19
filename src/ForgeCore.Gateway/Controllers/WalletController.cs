@@ -5,7 +5,7 @@ using ForgeCore.Economy.Contracts.Requests;
 
 namespace ForgeCore.Gateway.Controllers
 {
-    [Route("api/econommy/wallet")]
+    [Route("api/economy/wallet")]
     [ApiController]
     [Authorize]
     public class WalletController : ControllerBase
