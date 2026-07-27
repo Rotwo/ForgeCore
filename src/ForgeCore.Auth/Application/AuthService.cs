@@ -110,8 +110,10 @@ namespace ForgeCore.Auth.Application
             return new AuthResultDto
             {
                 AccountId = account.Id,
+                SessionId = newSession.Id,
                 AccessToken = accessToken,
-                RefreshToken = refreshToken
+                RefreshToken = newRefreshToken,
+                ExpiresAt = newSession.ExpiresAt
             };
         }
 
