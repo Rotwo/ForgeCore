@@ -1,13 +1,12 @@
 using ForgeCore.Inventories.Contracts;
+using ForgeCore.Inventories.Contracts.Requests;
+using ForgeCore.Inventories.Contracts.Responses;
 using ForgeCore.Inventories.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Text.Json;
-using ForgeCore.Inventories.Contracts.Requests;
-using ForgeCore.Inventories.Contracts.Responses;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace ForgeCore.Gateway.Controllers
 {
@@ -174,17 +173,14 @@ namespace ForgeCore.Gateway.Controllers
             }
         }
 
-        private static void ApplyMetadata(InventoryEntry entry, JObject? metadata)
+        private static void ApplyMetadata(InventoryEntry entry, JsonObject? metadata)
         {
-            if (metadata is null)
-                return;
+            if (metadata is null) return;
 
-            foreach (var property in metadata.Properties())
+            foreach (var (key, node) in metadata)
             {
-                var json = property.Value.ToString(Formatting.None);
-                var value = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(json);
-
-                entry.SetMetadata(property.Name, value);
+                var value = node?.Deserialize<JsonElement>() ?? default;
+                entry.SetMetadata(key, value);
             }
         }
 
@@ -198,9 +194,7 @@ namespace ForgeCore.Gateway.Controllers
                 Quantity = entry.Quantity,
                 SlotIndex = entry.SlotIndex,
                 IsStackable = entry.IsStackable,
-                Metadata = entry.Metadata.Values.ToDictionary(
-                    pair => pair.Key,
-                    pair => ToNewtonsoftValue(pair.Value))
+                Metadata = entry.Metadata.Values.ToDictionary(p => p.Key, p => (object?)p.Value)
             };
         }
 
@@ -212,20 +206,6 @@ namespace ForgeCore.Gateway.Controllers
                 OwnerId = inventory.OwnerId,
                 CreatedAt = inventory.CreatedAt,
                 Entries = inventory.Entries.Select(ToResponse).ToList()
-            };
-        }
-
-        private static object? ToNewtonsoftValue(JsonElement value)
-        {
-            return value.ValueKind switch
-            {
-                JsonValueKind.Undefined or JsonValueKind.Null => null,
-                JsonValueKind.True => true,
-                JsonValueKind.False => false,
-                JsonValueKind.Number when value.TryGetInt64(out var longValue) => longValue,
-                JsonValueKind.Number when value.TryGetDouble(out var doubleValue) => doubleValue,
-                JsonValueKind.String => value.GetString(),
-                _ => JsonConvert.DeserializeObject<object?>(value.GetRawText())
             };
         }
     }
