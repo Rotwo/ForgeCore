@@ -132,10 +132,16 @@ namespace ForgeCore.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("ip_address");
 
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("RefreshToken")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("refresh_token");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
