@@ -1,7 +1,6 @@
 ﻿using ForgeCore.Players.Contracts;
 using ForgeCore.Players.Contracts.Requests;
 using ForgeCore.Shared.Contracts;
-using ForgeCore.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -87,7 +86,7 @@ namespace ForgeCore.Gateway.Controllers
         {
             if (id == Guid.Empty)
                 return BadRequest("id is required");
-            if (string.IsNullOrWhiteSpace(request.NewName) || request == null)
+            if (request == null || string.IsNullOrWhiteSpace(request.NewName))
                 return BadRequest("newName is required");
             if (!await _playerService.IsOwnedByAccountAsync(id, _currentUser.AccountId))
                 return Forbid();
