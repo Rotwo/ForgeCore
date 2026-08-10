@@ -10,9 +10,5 @@
     <ProjectReference Include="..\ForgeCore.Players\ForgeCore.Players.csproj" />
     <ProjectReference Include="..\ForgeCore.Shared\ForgeCore.Shared.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" />
-  </ItemGroup>
-
+	
 </Project>

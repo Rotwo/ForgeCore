@@ -1,4 +1,4 @@
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 namespace ForgeCore.Inventories.Contracts.Requests
 {
@@ -8,6 +8,6 @@ namespace ForgeCore.Inventories.Contracts.Requests
         public int Quantity { get; set; }
         public int? SlotIndex { get; set; }
         public bool IsStackable { get; set; }
-        public JObject? Metadata { get; set; }
+        public JsonObject? Metadata { get; set; }
     }
 }
